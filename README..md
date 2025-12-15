@@ -128,64 +128,96 @@ The analysis is structured around **three complementary perspectives**:
 
 ## 5. Visualizations and Interpretation
 
-All figures are generated via scripts and saved as **PNG (static)** and **HTML (interactive)**.
+All figures are generated via scripts and saved as **PNG (static)** and **HTML (interactive)**.  
+The visualizations are designed to support **cross-modal validation**, allowing patterns observed in one modality to be confirmed or challenged using another.
 
-### 5.1 Image and Audio Availability Heatmaps
+---
 
-These calendar heatmaps visualize daily file availability across modalities.
+## 5.1 Image and Audio Availability Heatmaps
+
+These calendar heatmaps visualize **daily file availability** for image and audio data, as well as their **difference**, across the observation period.
 
 **Images**
-- `figures/2025_images_heatmap.png`
-- `figures/2025_audio_heatmap.png`
-- `figures/2025_contrast_heatmap.png`
+- ![Images Heatmap](figures/2025_images_heatmap.png)
+- ![Audio Heatmap](figures/2025_audio_heatmap.png)
+- ![File Difference Heatmap](figures/2025_file_diff_heatmap.png)
 
-```text
-Image files per day, Audio files per day, and modality imbalance
+**Description**  
+The first two heatmaps show the number of image and audio files captured per day, respectively.  
+The difference heatmap highlights days where one modality is substantially over- or under-represented relative to the other.
 
 ### Interpretation
 
-Under normal operation, image and audio capture volumes exhibit similar temporal structure. Isolated days with strong imbalance—high image counts paired with minimal audio or vice versa—indicate **modality-specific capture or persistence failures**, rather than environmental variation.
+Under normal operation, image and audio capture volumes exhibit **strongly aligned temporal structure**, reflecting shared triggering mechanisms and consistent pipeline behavior. This coherence supports the assumption that both modalities are responding to the same underlying traffic activity.
+
+However, a small number of **isolated days** exhibit pronounced imbalance—typically high image counts paired with minimal or zero audio persistence, or vice versa. These patterns are unlikely to reflect real-world traffic dynamics and instead indicate **modality-specific capture or persistence failures**, such as audio encoder issues, temporary storage disruptions, or pipeline interruptions.
+
+Crucially, these imbalances are **sporadic rather than sustained**, suggesting transient failures rather than systemic misconfiguration.
 
 ---
 
 ## 5.2 Image Quality Calendar Heatmaps
 
-These figures evaluate the **temporal stability of image quality**.
+These figures evaluate the **temporal stability of image quality**, independent of capture volume.
 
 **Images**
-- `figures/2025_blur_heatmap.png`
-- `figures/2025_brightness_heatmap.png`
-- `figures/2025_contrast_heatmap.png`
+- ![Blur Heatmap](figures/2025_blur_heatmap.png)
+- ![Brightness Heatmap](figures/2025_brightness_heatmap.png)
+- ![Contrast Heatmap](figures/2025_contrast_heatmap.png)
 
 ### Interpretation
 
-Image quality metrics remain largely stable across the observation period. Abrupt, localized shifts suggest **temporary obstruction or configuration changes**, rather than gradual camera degradation.
+Across the majority of the observation period, blur, brightness, and contrast metrics remain **remarkably stable**, indicating consistent camera focus, exposure, and configuration. This stability suggests that variations observed in capture volume or downstream performance are **not driven by gradual camera degradation**.
+
+Where abrupt, localized deviations occur, they are confined to short time windows and do not persist. Such behavior is more consistent with **temporary obstructions, brief defocus events, or short-lived configuration changes** than with long-term drift. The absence of widespread degradation patterns supports the conclusion that the imaging system is generally robust.
 
 ---
 
-## 5.3 Sensor Sound Level vs Audio Capture Volume
+## 5.3 Audio Quality Calendar Heatmaps (Waveform-Derived)
 
-This scatter plot compares **sensor-reported loudness** to **audio persistence**.
+These heatmaps summarize **waveform-derived audio quality metrics** at a daily resolution.
 
-**Image**
-- `figures/image_vs_audio_count_scatter.png`
+**Images**
+- ![RMS Heatmap](figures/2025_rms_heatmap.png)
+- ![ZCR Heatmap](figures/2025_zcr_heatmap.png)
 
 ### Interpretation
 
-Most days show coherent behavior. Isolated outliers with **high sensor loudness but near-zero audio persistence** strongly indicate **audio capture failure**, not low ambient sound.
+Daily RMS amplitude and zero-crossing rate (ZCR) exhibit coherent temporal structure, indicating stable audio signal characteristics under normal operation. Periods of low RMS or anomalous ZCR align with known low-activity intervals or with days flagged as capture anomalies in availability analyses.
+
+Importantly, these signal-derived metrics provide **independent validation** of sensor-reported audio levels. When waveform quality metrics diverge sharply from sensor reports—particularly on days with missing audio files—the discrepancy points to **persistence or extraction failures**, not genuine changes in ambient sound.
 
 ---
 
-## 5.4 Sensor vs Waveform Amplitude (Time Series)
+## 5.4 Sensor Sound Level vs Audio Capture Volume
 
-This figure compares **normalized sensor-reported sound levels** and **waveform-derived RMS amplitude**.
+This scatter plot compares **sensor-reported sound levels** with the **number of audio files persisted per day**.
 
 **Image**
-- `figures/sensor_vs_waveform_amplitude_time_series.png`
+- ![Sensor vs Audio Count](figures/image_vs_audio_count_scatter.png)
 
 ### Interpretation
 
-Temporal coherence dominates, with divergence limited to isolated days. These deviations align with **persistence failures**, rather than systematic drift or seasonal effects.
+A strong linear relationship is present. Most days form a dense, coherent cluster, confirming that higher sensor-reported sound levels generally correspond to greater audio capture volume. This relationship reflects expected system behavior and supports the validity of both sensor measurements and waveform extraction under normal conditions.
+
+A small number of clear outliers exhibit **high sensor-reported loudness paired with near-zero audio persistence**. These points are strong indicators of **audio capture failure**, where the sensor reports activity but the audio pipeline fails to persist corresponding files. The isolation of these outliers further supports the interpretation of transient failure rather than persistent malfunction.
+
+---
+
+## 5.5 Sensor vs Waveform Amplitude (Normalized Time Series)
+
+This figure compares **sensor-reported sound levels** and **waveform-derived RMS amplitude** after z-score normalization.
+
+**Image**
+- ![Sensor vs Waveform](figures/sensor_vs_waveform_amplitude_time_series.png)
+
+### Interpretation
+
+For most of the observation period, the two normalized series exhibit **strong temporal coherence**, indicating that both sensor-reported and waveform-derived metrics respond similarly to underlying environmental conditions.
+
+Divergence between the series is rare and temporally isolated. Notably, these deviations align with days identified as capture failures in availability and scatter analyses. This confirms that **persistence-based anomalies**, rather than signal amplitude alone, are the dominant failure mode.
+
+Overall, the normalized time series demonstrates that observed anomalies are **isolated events**, not part of broader drift or seasonal patterns, reinforcing confidence in the long-term stability of the sensing system.
 
 ---
 
@@ -196,8 +228,8 @@ ia626_project/
 ├── scripts/      # ETL and figure-generation scripts
 ├── results/      # Generated CSV outputs
 ├── figures/      # PNG and HTML visualizations
-├── notebooks/    # Exploratory notebooks
 └── README.md
+```
 
 ## 7. Reproducibility
 
@@ -205,7 +237,8 @@ ia626_project/
 - Raw data are omitted due to size constraints  
 - Directory structure and data schemas are fully documented  
 - Each ETL branch can be rerun independently  
-- All figures are reproducible from versioned CSV outputs  
+- All figures are reproducible from versioned CSV outputs 
+- Interactive plots available in figures/
 
 ---
 
