@@ -1,0 +1,4 @@
+folder_name,parsed_date,modality,quality,file_count,total_size,reason
+2021-11-14_l,2021-11-14,image,l,1,1160773,invalid_year_or_bad_date
+2027-12-20_l,2027-12-20,image,l,1,2280620,invalid_year_or_bad_date
+7075-10-31_l,7075-10-31,image,l,1,1786274,invalid_year_or_bad_date

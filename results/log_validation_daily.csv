@@ -1,0 +1,2 @@
+date,n_log_events,mean_dba,p90_dba,n_audio,log_to_audio_ratio,log_without_audio
+2025-12-13,5052,75.36334351441748,80.89457142857144,0.0,,True
